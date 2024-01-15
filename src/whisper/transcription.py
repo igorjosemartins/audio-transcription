@@ -13,7 +13,7 @@ model = whisper.load_model("small")
 result = model.transcribe(audio_path, language="pt", fp16=False, verbose=True, patience=2, beam_size=5)
 
 vtt_writer = get_writer("vtt", transcription_path)
-vtt_writer(result, '550e8400-e29b-41d4-a716-446655440000.wav')
+vtt_writer(result, f"{transcriptionId}.wav")
 
 # srt_writer = get_writer("srt", "whisper/transcriptions/")
 # srt_writer(result, '550e8400-e29b-41d4-a716-446655440000.wav')

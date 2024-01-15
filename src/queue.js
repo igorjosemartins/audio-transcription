@@ -1,5 +1,5 @@
 function connect() {
-    return require('amqplib').connect("amqp://localhost")
+    return require('amqplib').connect("amqp://localhost", { timeout: 3600000 })
         .then(conn => conn.createChannel());
 }
 
