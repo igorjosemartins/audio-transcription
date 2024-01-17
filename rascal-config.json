@@ -1,0 +1,31 @@
+{
+    "vhosts": {
+        "test": {
+            "connection": {
+                "url": "amqp://localhost"
+            },
+            "exchanges": {
+                "e1": {
+                    "assert": true,
+                    "type": "direct"
+                }
+            },
+            "queues": [
+                "q1"
+            ],
+            "publications": {
+                "p1": {
+                    "vhost": "test",
+                    "queue": "q1"
+                }
+            },
+            "subscriptions": {
+                "s1": {
+                    "vhost": "test",
+                    "queue": "q1",
+                    "contentType": "text/plain"
+                }
+            }
+        }
+    }
+}

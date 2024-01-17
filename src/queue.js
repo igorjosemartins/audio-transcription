@@ -1,5 +1,7 @@
-function connect() {
-    return require('amqplib').connect("amqp://localhost", { timeout: 3600000 })
+const amqp = require('amqplib');
+
+async function connect() {
+    return await amqp.connect("amqp://localhost", { timeout: 2000 })
         .then(conn => conn.createChannel());
 }
 
@@ -17,7 +19,7 @@ function sendToQueue(queue, id) {
     connect()
         .then(channel => createQueue(channel, queue))
         .then(channel => channel.sendToQueue(queue, Buffer.from(JSON.stringify(id))))
-        .catch(err => console.log(err))
+        .catch(err => console.log(err));
 }
 
 function consume(queue, callback) {

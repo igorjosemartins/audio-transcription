@@ -4,6 +4,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const createTranscription = require('./src/routes/createTranscription');
 const getTranscriptionStatus = require('./src/routes/getTranscriptionStatus');
+const deleteAllTranscriptions = require('./src/routes/deleteAllTranscriptions');
+const testRoute = require('./src/routes/test');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -23,6 +25,8 @@ app.listen(port, () => {
     
     app.use('/api-transcription', createTranscription);
     app.use('/api-transcription', getTranscriptionStatus);
+    app.use('/api-transcription', deleteAllTranscriptions);
+    app.use('/api-transcription', testRoute);
 
     console.log(`Servidor ouvindo na porta: ${port}`);
-})
+});

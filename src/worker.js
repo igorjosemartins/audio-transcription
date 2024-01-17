@@ -4,7 +4,7 @@ const { execSync } = require('child_process');
 const mongoose = require('mongoose');
 const TranscriptionModel = require('./models/transcriptionModel');
 
-console.log('worker started');
+console.log('\nworker started');
 
 async function connectDataBase() {
     await mongoose.connect(process.env.DATABASE_URL);
@@ -12,9 +12,9 @@ async function connectDataBase() {
 
 connectDataBase().catch((error) => { return console.log(`Erro ao conectar ao MongoDB: ${error}`) });
 
-queue.consume("fila1", async (id) => {
+queue.consume("queue1", async (id) => {
 
-    console.log('\nnew transcription in queue');
+    console.log('\n\nnew transcription in queue!');
 
     const transcriptionId = id.content.toString().replace(/"/g, "");
 
@@ -23,7 +23,7 @@ queue.consume("fila1", async (id) => {
     try {
         console.log('\ntranscribing audio to text...');
         execSync(`python3 ${whisperPath} ${transcriptionId}`);
-        console.log('transcription completed!');
+        console.log('\ntranscription completed!');
 
     } catch (error) {
         console.error(`Transcription error in 'transcription.py' : ${error}`);
@@ -36,6 +36,8 @@ queue.consume("fila1", async (id) => {
         );
 
     } catch (error) {
-        console.error(`Error updating transcript status in MongoDB : ${error}`)
+        console.error(`Error updating transcript status in MongoDB : ${error}`);
     }
+
+    console.log('\n\nwaiting new transcription in queue...');
 })

@@ -8,7 +8,7 @@ router.get('/status/:id', async (req, res) => {
 
     const transcriptionId = req.params.id;
 
-    const searchedTranscription = await TranscriptionModel.findById(transcriptionId);
+    const searchedTranscription = await TranscriptionModel.findOne({ t_id: transcriptionId });
 
     if (!searchedTranscription) {
         return res.status(404).json({ error: "Transcript not found!" });

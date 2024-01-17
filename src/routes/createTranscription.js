@@ -1,36 +1,29 @@
+const crypto = require('crypto');
 const express = require('express');
-const fs = require('fs');
 const multer = require('multer');
-const queue = require('../queue');
+const rascal = require('../rascalProducer');
 const TranscriptionModel = require('../models/transcriptionModel');
 
-const upload = multer({ dest: 'src/multer_uploads' });
 const router = express.Router();
 
-function createWavFile(transcriptionId, multerPath, newPath) {
-    
-    const audioFile = fs.readFileSync(multerPath);
-    const audioDirectory = `${newPath}/${transcriptionId}.wav`;
-
-    fs.writeFileSync(audioDirectory, audioFile);
-}
+const storage = multer.diskStorage({
+    destination: 'src/audios',
+    filename: function (req, res, cb) {
+        cb(null, `${crypto.randomUUID()}.wav`)
+    }
+});
+const upload = multer({ storage: storage });
 
 router.post('/create', upload.single('audio'), async (req, res) => {
 
-    let status = "Processando";
+    const transcriptionId = req.file.filename.split('.')[0];
 
-    const newTranscription = new TranscriptionModel({ status });
+    const newTranscription = new TranscriptionModel({ t_id: transcriptionId, status: "Processando" });
     await newTranscription.save();
 
-    const transcriptionId = newTranscription._id;
-    const multerPath = req.file.path;
-    const audioPath = 'C:/Users/Igor/Desktop/API_transcricao/src/audios';
+    rascal.sendToQueue(transcriptionId);
 
-    createWavFile(transcriptionId, multerPath, audioPath);
-
-    queue.sendToQueue("fila1", transcriptionId);
-
-    res.status(200).json({ status: "Transcrição em andamento", id: transcriptionId });
+    res.status(200).json({ id: transcriptionId, status: "Transcrição em andamento" });
 });
 
 module.exports = router;
