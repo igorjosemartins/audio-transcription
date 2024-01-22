@@ -5,28 +5,23 @@ const mongoose = require('mongoose');
 const createTranscription = require('./src/routes/createTranscription');
 const getTranscriptionStatus = require('./src/routes/getTranscriptionStatus');
 const deleteAllTranscriptions = require('./src/routes/deleteAllTranscriptions');
-const testRoute = require('./src/routes/test');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3333;
 
 async function connectDataBase() {
     await mongoose.connect(process.env.DATABASE_URL);
 }
 
 app.listen(port, () => {
-    connectDataBase().catch((error) => {
-        return console.log(`Erro ao conectar ao MongoDB: ${error}`);
-    })
+    connectDataBase().catch((err) => {
+        return console.log(`[MongoDB] Error connecting to database : ${err.message}`);
+    });
 
     app.use(cors({ origin: "*" }));
-    app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     
-    app.use('/api-transcription', createTranscription);
-    app.use('/api-transcription', getTranscriptionStatus);
-    app.use('/api-transcription', deleteAllTranscriptions);
-    app.use('/api-transcription', testRoute);
+    app.use('/api-transcription', [createTranscription, getTranscriptionStatus, deleteAllTranscriptions]);
 
-    console.log(`Servidor ouvindo na porta: ${port}`);
+    console.log(`Server listening on : ${port}`);
 });
