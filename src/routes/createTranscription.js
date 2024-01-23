@@ -22,6 +22,7 @@ const wavFilter = (req, file, cb) => {
         cb(null, true);
     }
 }
+
 const upload = multer({ storage: storage, fileFilter: wavFilter });
 
 router.post('/create', upload.single('audio'), async (req, res) => {
@@ -38,13 +39,13 @@ router.post('/create', upload.single('audio'), async (req, res) => {
 
     const transcriptionId = req.file.filename.split('.')[0];
 
-    const newTranscription = new TranscriptionModel({ t_id: transcriptionId });
+    const newTranscription = new TranscriptionModel({ t_id: transcriptionId, status: 'In queue' });
     await newTranscription.save();
 
     redis.publish('ch1', transcriptionId);
 
-    console.log('[POST] (200) : Transcription accepted and in progress...');
-    res.status(200).json({ id: transcriptionId, status: "Transcription accepted and in progress..." });
+    console.log('[POST] (201) : Transcription added to queue');
+    res.status(201).json({ id: transcriptionId, status: "Transcription added to queue" });
 });
 
 module.exports = router;

@@ -21,7 +21,7 @@ app.listen(port, () => {
     app.use(cors({ origin: "*" }));
     app.use(express.urlencoded({ extended: true }));
     
-    app.use('/api-transcription', [createTranscription, getTranscriptionStatus, deleteAllTranscriptions]);
+    app.use('/transcricao', [createTranscription, getTranscriptionStatus, deleteAllTranscriptions]);
 
     console.log(`Server listening on : ${port}`);
 });
